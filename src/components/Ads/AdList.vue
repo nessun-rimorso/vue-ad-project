@@ -1,13 +1,13 @@
 <template>
     <v-container>
-        <v-layout row>
+        <v-layout row v-if="!loading && myAds.length !== 0">
             <v-flex xs12 sm6 offset-sm3>
                 <h1 class="text--secondary mb-3"
                 >My ads</h1>
 
                 <v-card
                         class="elevation-10 mb-5"
-                        v-for="ad of ads"
+                        v-for="ad of myAds"
                         :key="ad.id"
                 >
                     <v-container class="pt-0 pb-0">
@@ -39,29 +39,32 @@
                 </v-card>
             </v-flex>
         </v-layout>
+        <v-layout row v-else-if="!loading && myAds.length === 0">
+            <v-flex xs12 class="d-flex justify-center align-center pt-5">
+                <h1 class="text--primary">You have no ads.</h1>
+            </v-flex>
+        </v-layout>
+        <v-layout row v-else-if="!loading && myAds.length === 0">
+            <v-flex xs12 class="d-flex justify-center align-center pt-5">
+                <v-progress-circular
+                        indeterminate
+                        color="purple"
+                        :size="100"
+                        :width="5"
+                ></v-progress-circular>
+            </v-flex>
+        </v-layout>
     </v-container>
 </template>
 
 <script>
     export default {
-        data () {
-            return {
-                ads: [
-                    {
-                        title: 'First ad',
-                        description: 'Hello I am a description',
-                        promo: false,
-                        imageSrc: 'http://centrdelfin.ru/wp-content/uploads/2012/02/29_06_2009_0643925001246262014_avtora-ne-znayu-esli-kto-v-kurse-napishite-v.jpg',
-                        id: '123'
-                    },
-                    {
-                        title: 'Second ad',
-                        description: 'Hello I am a description',
-                        promo: true,
-                        imageSrc: 'http://royalsky.by/assets/images/blog/florencija/florencija-1.jpg',
-                        id: '1234'
-                    },
-                ]
+        computed: {
+            myAds () {
+                return this.$store.getters.myAds
+            },
+            loading () {
+                return this.$store.getters.loading
             }
         }
     }

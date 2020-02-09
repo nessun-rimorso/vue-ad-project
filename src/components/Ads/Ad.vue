@@ -2,34 +2,59 @@
     <v-container>
         <v-layout row>
             <v-flex xs12>
-                <v-card>
+                <v-card v-if="!loading">
 
                     <v-img
-                            src="http://centrdelfin.ru/wp-content/uploads/2012/02/29_06_2009_0643925001246262014_avtora-ne-znayu-esli-kto-v-kurse-napishite-v.jpg"
+                            :src="ad.imageSrc"
                             height="300"
                     ></v-img>
 
                     <v-card-text>
-                        <h1 class="text--primary">Lorem</h1>
-                        <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Esse, voluptas.</p>
+                        <h1 class="text--primary">{{ad.title}}</h1>
+                        <p>{{ad.description}}</p>
                     </v-card-text>
 
                     <v-card-actions>
                         <v-spacer></v-spacer>
-                        <v-btn class="warning" text>Edit</v-btn>
-                        <v-btn class="success">Buy</v-btn>
+                        <add-edit-ad-modal
+                                :ad="ad"
+                                v-if="isOwner"
+                        ></add-edit-ad-modal>
+                        <app-buy-modal :ad="ad"></app-buy-modal>
                     </v-card-actions>
-
                 </v-card>
+            <div v-else class="d-flex justify-center align-center pt-5">
+                <v-progress-circular
+                        indeterminate
+                        color="purple"
+                        :size="100"
+                        :width="5"
+                ></v-progress-circular>
+            </div>
             </v-flex>
         </v-layout>
     </v-container>
 </template>
 
 <script>
-    export default {
-        data () {
-            return {}
+import EditAdModal from "./EditAdModal";
+
+export default {
+    props: ['id'],
+    computed: {
+        ad () {
+            const id = this.id;
+            return this.$store.getters.adBuyId(id);
+        },
+        loading () {
+            return this.$store.getters.loading
+        },
+        isOwner () {
+            return this.ad.ownerId === this.$store.getters.user.id
         }
+    },
+    components: {
+        addEditAdModal: EditAdModal
     }
+}
 </script>
